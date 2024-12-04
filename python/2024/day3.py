@@ -67,7 +67,6 @@ if __name__ == '__main__':
     if isinstance(raw, list):
         raw = ''.join(raw)
 
-    res = 'no task number provided'
     if args.task == 1:
         res = sum_of_multiplications(raw)
         print('Multiplications sum after deciphering: ', res)
