@@ -1,6 +1,13 @@
 import sys
 import pandas as pd
 from utils import make_reports
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('filename')
+parser.add_argument('-t', '--task', help="Task number which assosiated function need to perform ", type=int)
+args = parser.parse_args()
 
 
 def detect_safe_reports(reports: pd.DataFrame) -> pd.Series:
@@ -23,11 +30,15 @@ def detect_one_lvl_drop_safe_reports(reports: pd.DataFrame) -> pd.Series:
 
 
 if __name__ == '__main__':
-    file = sys.argv[1]
-    reports = make_reports(file)
-    safe_reports = detect_safe_reports(reports)
-    n_safe_reports = safe_reports.sum()
-    dropout_results = detect_one_lvl_drop_safe_reports(reports)
-    safeish_reports = pd.DataFrame(dropout_results).any()
-    n_safeish_reports = safeish_reports.sum()
-    print('Safe reports number:', n_safe_reports, '\nOne-level-down safe reports number:', n_safeish_reports)
+    reports = make_reports(args.filename)
+
+    if args.task == 1:
+        safe_reports = detect_safe_reports(reports)
+        n_safe_reports = safe_reports.sum()
+        print('Safe reports number:', n_safe_reports)
+    
+    if args.task == 2:
+        dropout_results = detect_one_lvl_drop_safe_reports(reports)
+        safeish_reports = pd.DataFrame(dropout_results).any()
+        n_safeish_reports = safeish_reports.sum()
+        print('One-level-down safe reports number:', n_safeish_reports)
