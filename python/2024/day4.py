@@ -1,10 +1,9 @@
-import itertools
 import argparse
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str)
-parser.add_argument('-t', '--task', help='Task number which assosiated function need to perform ', type=int)
+parser.add_argument('-t', '--task', help='Task number which associated function need to perform ', type=int)
 args = parser.parse_args()
 
 
@@ -59,6 +58,7 @@ def build_sm_boards(board):
             sm_board = [[board[i+x][j+y] for y in range(SM_BOARD_SIZE)] for x in range(SM_BOARD_SIZE)]
             sm_boards.append(sm_board)
     return sm_boards
+
 
 def count_x_mas(board):
     count = 0

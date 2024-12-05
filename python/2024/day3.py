@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename')
-parser.add_argument('-t', '--task', help='Task number which assosiated function need to perform ', type=int)
+parser.add_argument('-t', '--task', help='Task number which associated function need to perform ', type=int)
 args = parser.parse_args()
 
 
@@ -61,6 +61,7 @@ def sum_of_multiplications(s: str) -> int:
                 total += numbers[0] * numbers[1]
         index += 1
     return total
+
 
 if __name__ == '__main__':
     raw = open(args.filename).readlines()
