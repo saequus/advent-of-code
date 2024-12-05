@@ -1,12 +1,13 @@
+import itertools
 import argparse
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str)
-parser.add_argument('-t', '--task', help="Task number which assosiated function need to perform ", type=int)
+parser.add_argument('-t', '--task', help='Task number which assosiated function need to perform ', type=int)
 args = parser.parse_args()
 
-    
+
 def is_word(board, word, row, row_dir, column, column_dir):
     for _, char in enumerate(word):
         if row < 0 or row >= len(board) or column < 0 or column >= len(board[row]):
@@ -29,13 +30,41 @@ def count_words(board, word, row, column):
     return count
 
 
-def find_xmas_occurrences(raw: str) -> int:
+def find_xmas_occurrences(raw: list[str]) -> int:
     n = 0
     for row in range(len(raw)):
         for col in range(len(raw[row])):
-            n += count_words(raw, "XMAS", row, col)
+            n += count_words(raw, 'XMAS', row, col)
     return n
 
+
+def is_x_shape(b):
+    middle = b[1][1] == 'A'
+    lefttop = (b[0][0] == 'M' and b[2][2] == 'S') or (b[0][0] == 'S' and b[2][2] == 'M')
+    righttop = (b[0][2] == 'M' and b[2][0] == 'S') or (b[0][2] == 'S' and b[2][0] == 'M')
+
+    if middle and lefttop and righttop:
+        return 1
+    return 0
+
+
+def build_sm_boards(board):
+    SM_BOARD_SIZE = 3
+    rows = len(board)
+    cols = len(board[0])
+    sm_boards = []
+
+    for i in range(rows - SM_BOARD_SIZE + 1):
+        for j in range(cols - SM_BOARD_SIZE + 1):
+            sm_board = [[board[i+x][j+y] for y in range(SM_BOARD_SIZE)] for x in range(SM_BOARD_SIZE)]
+            sm_boards.append(sm_board)
+    return sm_boards
+
+def count_x_mas(board):
+    count = 0
+    for sm_board in build_sm_boards(board):
+        count += is_x_shape(sm_board)
+    return count
 
 
 if __name__ == '__main__':
@@ -45,5 +74,5 @@ if __name__ == '__main__':
         res = find_xmas_occurrences(raw)
         print('Xmas occurrencies: ', res)
     if args.task == 2:
-        pass
-
+        res = count_x_mas(raw)
+        print('Xmas shape occurrencies: ', res)

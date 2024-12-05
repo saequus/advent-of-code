@@ -2,7 +2,7 @@ import pandas as pd
 from utils import make_reports
 from day2 import detect_safe_reports, detect_one_lvl_drop_safe_reports
 
-DAY2_TEST_FILE_PATH = './data/day2_test.txt' 
+DAY2_TEST_FILE_PATH = './data/day2_01_test.txt' 
 
 def test_day2():
     reports = make_reports(DAY2_TEST_FILE_PATH)

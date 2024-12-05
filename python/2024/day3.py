@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename')
-parser.add_argument('-t', '--task', help="Task number which assosiated function need to perform ", type=int)
+parser.add_argument('-t', '--task', help='Task number which assosiated function need to perform ', type=int)
 args = parser.parse_args()
 
 
@@ -14,7 +14,7 @@ def sum_of_multiplications_extra_istructions(s: str) -> int:
     while index < len(s):
         if s[index:index+7] == "don't()":
             execute = False
-        if s[index:index+4] == "do()":
+        if s[index:index+4] == 'do()':
             execute = True
 
         if s[index:index+4] == 'mul(':
