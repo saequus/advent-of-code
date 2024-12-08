@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str)
-parser.add_argument('-t', '--task', help='Task number which associated function need to perform ', type=int)
+parser.add_argument('-t', '--task', help='Task number which associated function need to execute', type=int)
 args = parser.parse_args()
 
 
