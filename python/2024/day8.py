@@ -1,6 +1,5 @@
-
-
 import argparse
+from utils import is_in_boundaries, combinations
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str)
@@ -8,82 +7,62 @@ parser.add_argument('-t', '--task', help='Task number which associated function 
 args = parser.parse_args()
 
 
-def get_anti_notes_positions(board: list[str], x: int, y: int, i: int, j: int):
-    l_col = len(board)
-    l_row = len(board[0])
-    x_bigger = x > i
-    y_bigger = y > j
-    x_dist = x - i if x_bigger else i - x
-    y_dist = y - j if y_bigger else j - y
-
-    if x_bigger:
-        a = x + x_dist
-        c = i - x_dist
-    else:
-        a = x - x_dist
-        c = i + x_dist
-    if y_bigger:
-        b = y + y_dist
-        d = j - y_dist
-    else:
-        b = y - y_dist
-        d = j + y_dist
-
-    first = a, b,
-    second = c, d
-    if a < 0 or b < 0 or a >= l_row or b >= l_col:
-        first = None, None,
-    if c < 0 or d < 0 or c >= l_row or d >= l_col:
-        second = None, None
-
-    return *first, *second
+class Position:
+    def __init__(self, row, col):
+        self.row = row
+        self.col = col
 
 
-def build_frequency_map(board: list[str]):
-    m = {}
-    col_len = len(board[0])
-    for i in range(len(board)):
-        for j in range(col_len):
-            frequency = board[i][j]
-            if frequency == '.':
-                continue
-            if frequency not in m:
-                m[frequency] = [(i, j)]
+class Antenna:
+    def __init__(self, name, position):
+        self.name = name
+        self.position = position
+
+
+def mirror(a, b, radius):
+    dx = b.row - a.row
+    dy = b.col - a.col
+    pos_a = Position(b.row + radius * dx, b.col + radius * dy)
+    pos_b = Position(a.row - radius * dx, a.col - radius * dy)
+    return pos_a, pos_b
+
+
+def print_matrix(anti_nodes, max_rows, max_cols):
+    for row_idx in range(max_rows):
+        for col_idx in range(max_cols):
+            if Position(row_idx, col_idx) in anti_nodes:
+                print("#", end="")
             else:
-                m[frequency].append((i, j))
-    return m
+                print(".", end="")
+        print()
 
 
-def find_anti_nodes_positions_on_board(board: list[str], m: dict):
-    anti_nodes_arr = []
-    for fr, pos_arr in m.items():
-        s1 = 0
-        s2 = 0
-        while s1 < len(pos_arr) - 1:
-            while s2 < len(pos_arr):
-
-                if s2 == s1:
-                    pass
-                else:
-                    x, y = pos_arr[s1]
-                    i, j = pos_arr[s2]
-                    ps = get_anti_notes_positions(board, x, y, i, j)
-                    if ps[0] and [ps[0], ps[1]] not in anti_nodes_arr:
-                        anti_nodes_arr.append([ps[0], ps[1]])
-                    if ps[2] and [ps[2], ps[3]] not in anti_nodes_arr:
-                        anti_nodes_arr.append([ps[2], ps[3]])
-                s2 += 1
-            s1 += 1
-            s2 = s1 + 1
-    return anti_nodes_arr
+def find_anti_nodes1(antennas, max_rows, max_cols, anti_nodes):
+    pair_of_antennas = combinations(antennas, 2)
+    for pair in pair_of_antennas:
+        a, b = mirror(pair[0].position, pair[1].position, 1)
+        if is_in_boundaries(a.row, a.col, max_rows, max_cols):
+            anti_nodes[(a.row, a.col)] = True
+        if is_in_boundaries(b.row, b.col, max_rows, max_cols):
+            anti_nodes[(b.row, b.col)] = True
 
 
-def calc1(board: list[str]) -> int:
-    frequency_map = build_frequency_map(board)
-    anti_nodes_arr = find_anti_nodes_positions_on_board(board, frequency_map)
-    # print('m: ', frequency_map)
-    # print('anti_nodes_arr: ', anti_nodes_arr, len(anti_nodes_arr))
-    return len(anti_nodes_arr)
+def calc1(board: list[str]):
+    result = 0
+    antennas = {}
+    max_rows = len(board)
+    max_cols = len(board[0])
+    for row in range(max_rows):
+        for col in range(max_cols):
+            value = board[row][col]
+            if value != ".":
+                antennas.setdefault(value, []).append(Antenna(value, Position(row, col)))
+    anti_nodes = {}
+    for sub_antennas in antennas.values():
+        find_anti_nodes1(sub_antennas, max_rows, max_cols, anti_nodes)
+
+    result += len(anti_nodes)
+    return result
 
 
 if __name__ == '__main__':
@@ -99,6 +78,5 @@ if __name__ == '__main__':
 
     if args.task == 2:
         pass
-
 
 
