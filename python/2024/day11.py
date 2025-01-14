@@ -7,42 +7,46 @@ args = parser.parse_args()
 
 
 def blink_for_new_setup(stones, n):
-    if n == 0:
-        return stones
-    
-    new = []
-    for i in range(len(stones)):
-        stone = stones[i]
-        if int(stone) == 0:
-            new.append('1')
-        elif len(stone) % 2 == 0:
-            st_len = len(stone) // 2
-            first, second = int(stone[:st_len]), int(stone[st_len:])
-            new.append(str(first))
-            new.append(str(second))
+    def insert_or_update(s, key, val):
+        if key in s:
+            s[key] += val
         else:
-            new.append(str(int(stone) * 2024))
-    
-    return blink_for_new_setup(new, n - 1)
-    
+            s[key] = val
+
+    while n > 0:
+        new = {}
+        for k, v in stones.items():
+            if k == 0:
+                insert_or_update(new, 1, v)
+            elif len(str(k)) % 2 == 0:
+                mid = len(str(k)) // 2
+                first, second = int(str(k)[:mid]), int(str(k)[mid:])
+                insert_or_update(new, first, v)
+                insert_or_update(new, second, v)
+            else:
+                insert_or_update(new, k * 2024, v)
+        n -= 1
+        stones = new
+
+    res = sum(stones.values())
+    return res
 
 
-def calc1(l):
-    stones = l.split(' ') 
 
-    new_stones_setup = blink_for_new_setup(stones, 25)
-
-    return len(new_stones_setup)
+def calc1(stones):
+    new_stones_count = blink_for_new_setup(stones, 25)
+    return new_stones_count
 
 
-def calc2(s):
-    pass
+def calc2(stones):
+    new_stones_count = blink_for_new_setup(stones, 75)
+    return new_stones_count
 
 
 if __name__ == '__main__':
     raw = open(args.filename).readlines()
-    for line in raw:
-        l = line.replace('\n', '')
+    l = raw[0].replace('\n', '').split(' ')
+    l = {int(_): 1 for _ in l}
 
     if args.task == 1:
         res = calc1(l)
@@ -50,6 +54,4 @@ if __name__ == '__main__':
 
     if args.task == 2:
         res = calc2(l)
-        print('[Wrong] Checksum reworked: ', res)
-
-
+        print('Total stones num: ', res)
